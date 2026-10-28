@@ -1,5 +1,44 @@
+<p align="center">
+  <img src="assets/social.png" alt="NutriSafe" width="720">
+</p>
+
+<p align="center">
+  <a href="https://dotstefano.github.io/nutrisafe/"><b>Abrir la app →</b></a>
+</p>
+
 # NutriSafe
 
-Analizador de etiquetas de alimentos: ingredientes, aditivos, nutrientes y alérgenos (UE/EFSA/JECFA, Open Food Facts).
+**NutriSafe lee la etiqueta de un alimento y explica cada ingrediente, aditivo y alérgeno:** qué es, si está autorizado en la Unión Europea, su ingesta diaria admisible (IDA) y si encaja con tu perfil.
 
-App: https://DotStefano.github.io/nutrisafe/
+Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear cuentas.
+
+## Qué hace
+
+| | |
+|---|---|
+| 📷 **Foto de la etiqueta** | Lee la lista de ingredientes con la cámara (OCR), corrige la iluminación y recorta el bloque de texto automáticamente. |
+| 🏷️ **Código de barras** | Busca el producto en Open Food Facts: ingredientes, información nutricional, Nutri-Score y NOVA. |
+| ✍️ **Pegar o escribir** | Analiza una lista copiada y entiende paréntesis, porcentajes, "puede contener trazas de…", etc. |
+| 🔎 **Buscador** | Unos 3 500 ingredientes, aditivos (E-numbers) y nutrientes con sus sinónimos en 7 idiomas: es, en, fr, nl, de, it y pt. |
+| ⚠️ **Alérgenos** | Detecta los 14 alérgenos de declaración obligatoria en la UE (Reglamento 1169/2011). |
+| 👤 **Perfil** | Avisa de lo que quieres evitar: alérgenos, aditivos, ingredientes de origen animal (vegano o vegetariano)… |
+| 📊 **Comparar e historial** | Guarda los productos analizados y compáralos lado a lado. |
+
+## Fuentes de datos
+
+- **Comisión Europea:** lista de aditivos autorizados (Anexo II del Reglamento (CE) 1333/2008) y formas autorizadas de vitaminas, minerales y otras sustancias (Reglamento (CE) 1925/2006, Directiva 2002/46/CE y Reglamento (UE) 609/2013).
+- **EFSA:** OpenFoodTox, con las IDA y otros valores de referencia.
+- **OMS/FAO:** evaluaciones del JECFA.
+- **Open Food Facts:** taxonomías de ingredientes, aditivos y alérgenos, y la base de productos. Licencia [ODbL](https://opendatacommons.org/licenses/odbl/).
+
+## Privacidad
+
+Las fotos se procesan en tu propio dispositivo y no se suben a ningún servidor. El perfil y el historial se guardan solo en tu navegador. La única consulta externa es el código de barras, que se envía a Open Food Facts.
+
+## Aviso
+
+NutriSafe es una herramienta informativa y no sustituye el consejo médico ni nutricional. Ante una alergia o una intolerancia, confía siempre en la etiqueta original del producto.
+
+---
+
+Hecho por **Stefano Simonetti Macaya**.
