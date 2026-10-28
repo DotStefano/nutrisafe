@@ -36,7 +36,7 @@ Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear 
 |---|---|
 | 📷 **Foto de la etiqueta** | Lee la lista de ingredientes con PaddleOCR (PP-OCRv5), directamente en tu móvil. Reconoce los 7 idiomas sin elegir ninguno, aguanta fotos torcidas o con mala luz, y tiene Tesseract de respaldo. **El texto leído se puede corregir** antes de analizarlo. |
 | 🏷️ **Código de barras** | Busca el producto en Open Food Facts: ingredientes, información nutricional, Nutri-Score y NOVA. |
-| 🅰️ **Nutri-Score** | Calcula la letra con el algoritmo oficial de 2023 a partir de la tabla nutricional: escribiendo los valores, fotografiando la tabla o desde un producto de Open Food Facts. Muestra el desglose de puntos y qué cambio mejoraría la letra. |
+| 🅰️ **Nutri-Score** | Calcula la letra con el algoritmo oficial de 2023 a partir de la tabla nutricional: escribiendo los valores, fotografiando la tabla, desde un producto de Open Food Facts o buscando un alimento genérico por su nombre (por ejemplo «hallulla» o «palta») en USDA FoodData Central. Muestra el desglose de puntos y qué cambio mejoraría la letra. |
 | ✍️ **Pegar o escribir** | Analiza una lista copiada y entiende paréntesis, porcentajes, "puede contener trazas de…", etc. |
 | 🔎 **Buscador** | Unos 3 500 ingredientes, aditivos (E-numbers) y nutrientes con sus sinónimos en 7 idiomas: es, en, fr, nl, de, it y pt. |
 | ⚠️ **Alérgenos** | Detecta los 14 alérgenos de declaración obligatoria en la UE (Reglamento 1169/2011). |
@@ -50,11 +50,12 @@ Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear 
 - **EFSA:** OpenFoodTox, con las IDA y otros valores de referencia.
 - **OMS/FAO:** evaluaciones del JECFA.
 - **OCR:** [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) (modelos PP-OCRv5, licencia Apache-2.0) sobre [ONNX Runtime Web](https://onnxruntime.ai/) (MIT), con [Tesseract.js](https://tesseract.projectnaptha.com/) (Apache-2.0) como respaldo.
+- **USDA FoodData Central:** valores nutricionales medios de alimentos genéricos para la calculadora de Nutri-Score. Dominio público ([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)).
 - **Open Food Facts:** taxonomías de ingredientes, aditivos y alérgenos, y la base de productos. Licencia [ODbL](https://opendatacommons.org/licenses/odbl/).
 
 ## Privacidad
 
-Las fotos se procesan en tu propio dispositivo y no se suben a ningún servidor. La primera vez la app descarga los modelos de lectura (unos 24 MB) y después los guarda en el navegador. El perfil y el historial se guardan solo en tu navegador. La única consulta externa es el código de barras, que se envía a Open Food Facts.
+Las fotos se procesan en tu propio dispositivo y no se suben a ningún servidor. La primera vez la app descarga los modelos de lectura (unos 24 MB) y después los guarda en el navegador. El perfil y el historial se guardan solo en tu navegador. Las únicas consultas externas son el código de barras, que se envía a Open Food Facts, y el nombre del alimento que se busca en la calculadora de Nutri-Score, que se envía (traducido al inglés) a USDA FoodData Central.
 
 ## Aviso
 
