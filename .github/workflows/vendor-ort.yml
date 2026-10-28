@@ -1,0 +1,28 @@
+name: Descargar onnxruntime-web
+on:
+  push:
+    paths: ['.github/workflows/vendor-ort.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Descargar onnxruntime-web 1.20.1 (solo backend WASM)
+        run: |
+          mkdir -p vendor/ort && cd vendor/ort
+          npm pack onnxruntime-web@1.20.1 --silent
+          tar xzf onnxruntime-web-1.20.1.tgz
+          cp package/dist/ort.wasm.min.js package/dist/ort-wasm-simd-threaded.wasm package/dist/ort-wasm-simd-threaded.mjs package/LICENSE . 2>/dev/null || true
+          ls -la package/dist | head -50 > listado.txt
+          rm -rf package onnxruntime-web-1.20.1.tgz
+          ls -la
+      - name: Guardar en el repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vendor
+          git commit -m "Incluir onnxruntime-web 1.20.1 (WASM)" || echo "sin cambios"
+          git push
