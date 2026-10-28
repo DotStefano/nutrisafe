@@ -150,7 +150,15 @@ if (window.tailwind) tailwind.config = {
           </div>
         </div>
         <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">Haz una foto a la lista de ingredientes. El texto se lee en tu propio teléfono (no se envía a ningún servidor), se recorta la lista y se compara con la base. Revisa siempre el texto: el OCR puede equivocarse.</p>
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3">
+          <label for="ocr-engine" class="text-xs font-bold text-slate-400 uppercase">Motor de lectura:</label>
+          <select id="ocr-engine" onchange="onOcrEngineChange()" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-semibold">
+            <option value="paddle">PaddleOCR · más preciso (recomendado)</option>
+            <option value="tesseract">Tesseract · más ligero</option>
+          </select>
+          <span id="ocr-engine-note" class="text-[11px] text-slate-500">Reconoce los 7 idiomas sin elegir. La primera vez descarga unos 24 MB.</span>
+        </div>
+        <div id="ocr-lang-row" class="hidden flex items-center gap-3">
           <label for="ocr-lang" class="text-xs font-bold text-slate-400 uppercase">Idioma de la etiqueta:</label>
           <select id="ocr-lang" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-semibold">
             <option value="spa">Español</option><option value="spa+eng">Español + inglés</option><option value="eng">Inglés</option><option value="fra">Francés</option>
@@ -164,7 +172,7 @@ if (window.tailwind) tailwind.config = {
         <div class="text-[11px] text-slate-500 leading-relaxed space-y-1">
           <p>Consejos: encuadra solo el bloque de ingredientes, con buena luz, sin reflejos y con el texto recto. En envases curvos, haz la foto de frente.</p>
           <p id="ocr-secure-hint" class="hidden text-amber-700 dark:text-amber-300">La cámara en directo solo funciona si la app se abre desde una dirección https o desde localhost. El botón «Fotografiar ingredientes» funciona igualmente.</p>
-          <p>La primera vez se descarga el modelo del idioma elegido (necesita conexión); después queda guardado en el navegador.</p>
+          <p>La primera vez se descarga el modelo de lectura (necesita conexión); después queda guardado en el navegador.</p>
           <button onclick="openCameraModal()" class="text-emerald-700 dark:text-emerald-300 font-bold hover:underline">Usar la cámara en directo (ordenador)</button>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -184,11 +192,24 @@ if (window.tailwind) tailwind.config = {
           <p id="ocr-status-text" class="text-xs font-bold text-slate-500">Procesando imagen...</p>
           <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"><div id="ocr-progress" class="h-full bg-emerald-600 transition-all" style="width:0%"></div></div>
         </div>
-        <details id="ocr-raw-box" class="hidden text-xs">
-          <summary class="cursor-pointer font-bold text-slate-500">Ver la zona recortada y todo el texto leído</summary>
-          <img id="ocr-preview" alt="Zona de la foto que se ha leído" class="hidden mt-2 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white">
-          <pre id="ocr-raw-text" class="mt-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 whitespace-pre-wrap font-mono text-[11px] max-h-60 overflow-auto"></pre>
-        </details>
+        <div id="ocr-raw-box" class="hidden p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20 space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-300 flex items-center gap-1.5"><i class="ph-bold ph-pencil-simple-line"></i> Revisa el texto leído</h4>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Es todo lo que leyó el OCR. Corrige letras o palabras mal leídas y pulsa <b>Usar este texto</b>.</p>
+            </div>
+            <span id="ocr-engine-used" class="shrink-0 text-[10px] font-bold px-2 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500"></span>
+          </div>
+          <details class="text-xs">
+            <summary class="cursor-pointer font-bold text-slate-500">Ver la zona de la foto que se ha leído</summary>
+            <img id="ocr-preview" alt="Zona de la foto que se ha leído" class="hidden mt-2 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white">
+          </details>
+          <textarea id="ocr-raw-text" rows="6" spellcheck="true" lang="es" oninput="autoGrow(this)" class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono text-[11px] leading-relaxed"></textarea>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="applyOcrText()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center gap-1.5"><i class="ph-bold ph-check"></i> Usar este texto</button>
+            <button onclick="resetOcrText()" class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-bold text-xs text-slate-600 dark:text-slate-300 flex items-center gap-1.5"><i class="ph-bold ph-arrow-counter-clockwise"></i> Deshacer cambios</button>
+          </div>
+        </div>
         <div class="space-y-3">
           <div class="flex items-center justify-between">
             <label class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Texto de la etiqueta (editable)</label>
@@ -197,7 +218,7 @@ if (window.tailwind) tailwind.config = {
               <button onclick="loadSampleLabel('energetica')" class="text-[10px] font-bold text-emerald-600 hover:underline">Ejemplo bebida</button>
             </div>
           </div>
-          <textarea id="label-textarea" rows="4" placeholder="Pega aquí los ingredientes o usa la cámara/foto..." class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-xs font-mono"></textarea>
+          <textarea id="label-textarea" rows="4" oninput="autoGrow(this); scheduleReanalysis()" placeholder="Pega aquí los ingredientes o usa la cámara/foto..." class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-xs font-mono"></textarea>
         </div>
         <button onclick="analyzeLabelLocal()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2"><i class="ph-bold ph-shield-check text-base"></i><span>Analizar etiqueta</span></button>
       </div>
@@ -528,6 +549,11 @@ function detectAllergens(rawText, items) {
   return [...found].sort();
 }
 
+// Palabras normales en un idioma que en otro son un ingrediente: "polvo" es "en polvo" en español
+// y "pulpo" en portugués. Si el texto está en el idioma donde la palabra es normal, se ignora.
+const CROSS_FALSE_FRIENDS = { 'polvo': 'es' };
+function isCrossFalseFriend(match, langs) { const l = CROSS_FALSE_FRIENDS[match]; return !!l && langs.has(l); }
+
 // Detecta ingredientes en un texto. Si un término está contenido en otro más largo
 // (p. ej. "sodio" dentro de "nitrito de sodio"), se queda solo con el más largo.
 function detectIngredients(rawText, forcedLangs) {
@@ -543,7 +569,7 @@ function detectIngredients(rawText, forcedLangs) {
   // forcedLangs permite analizar trozos cortos con el idioma ya detectado en la lista completa.
   const langsInText = forcedLangs && forcedLangs.size ? forcedLangs : detectLangs(hits);
   if (!forcedLangs) lastDetectedLangs = langsInText;
-  const inLang = hits.filter(h => h.langs.has('*') || [...h.langs].some(l => langsInText.has(l)));
+  const inLang = hits.filter(h => (h.langs.has('*') || [...h.langs].some(l => langsInText.has(l))) && !isCrossFalseFriend(text.slice(h.start, h.end), langsInText));
   hits.length = 0; hits.push(...inLang);
   let kept = hits.filter(h => !hits.some(o => o !== h && o.item !== h.item && o.start <= h.start && o.end >= h.end && (o.end - o.start) > (h.end - h.start)));
   const spanOwner = new Map();
@@ -1418,7 +1444,7 @@ function closeBarcodeScannerModal() {
 }
 
 // =============================================================
-// OCR (TESSERACT.JS)
+// OCR: PREPARACIÓN DE LA FOTO Y TESSERACT.JS
 // =============================================================
 function handleImageUpload(event) {
   const file = event.target.files[0];
@@ -1575,57 +1601,320 @@ function extractIngredientsSection(t) {
   return { text: rest.trim().replace(/[\s.;,]+$/, '') + '.', found: true };
 }
 
-async function processImageWithOCR(imageSource) {
-  if (typeof Tesseract === 'undefined') { showToast('No se pudo cargar el motor OCR. Comprueba la conexión.', 'warning'); return; }
-  const lang = document.getElementById('ocr-lang').value;
-  const loading = document.getElementById('ocr-loading');
-  const status = document.getElementById('ocr-status-text');
-  const bar = document.getElementById('ocr-progress');
-  loading.classList.remove('hidden');
-  bar.style.width = '0%';
-  status.textContent = 'Preparando la imagen...';
-  let worker;
+// =============================================================
+// OCR CON PADDLEOCR (PP-OCRv5: detección de líneas + reconocimiento latino) sobre onnxruntime-web
+// Probado con las mismas fotos simuladas: Tesseract lee el 80 % de los ingredientes y PaddleOCR el 100 %.
+// Los modelos y el motor se sirven desde el propio GitHub Pages; si la app se abre como archivo local,
+// se descargan de la copia publicada. Se guardan en la caché del navegador tras la primera vez.
+// =============================================================
+const PADDLE_REMOTE = 'https://dotstefano.github.io/nutrisafe/';
+const PADDLE_FILES = {
+  ort: 'vendor/ort/ort.wasm.min.js',
+  det: { path: 'models/PP-OCRv5_mobile_det.onnx', size: 4748769 },
+  rec: { path: 'models/latin_PP-OCRv5_mobile_rec.onnx', size: 8066518 },
+  dict: 'models/ppocrv5_latin_dict.txt'
+};
+const PADDLE_CACHE = 'nutrisafe-ocr-v1';
+const PADDLE = { base: null, det: null, rec: null, chars: null, loading: null };
+
+function paddleBases() {
+  const local = /^https?:$/.test(location.protocol) ? new URL('./', location.href).href : null;
+  return [...new Set([local, PADDLE_REMOTE].filter(Boolean))];
+}
+
+// Descarga con barra de progreso y caché persistente (Cache Storage)
+async function paddleFetch(url, onProgress) {
+  let cache = null;
+  try { cache = await caches.open(PADDLE_CACHE); const hit = await cache.match(url); if (hit) return hit; } catch (e) { cache = null; }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + url);
+  let out = res;
+  if (onProgress && res.body && res.body.getReader) {
+    const reader = res.body.getReader(), parts = []; let got = 0;
+    for (;;) { const { done, value } = await reader.read(); if (done) break; parts.push(value); got += value.length; onProgress(got); }
+    out = new Response(new Blob(parts), { headers: { 'Content-Type': res.headers.get('Content-Type') || 'application/octet-stream' } });
+  }
+  if (cache) { try { await cache.put(url, out.clone()); } catch (e) { /* sin espacio: se descargará de nuevo */ } }
+  return out;
+}
+
+function loadScriptOnce(src) {
+  return new Promise((ok, ko) => {
+    const s = document.createElement('script'); s.src = src; s.async = true;
+    s.onload = ok; s.onerror = () => { s.remove(); ko(new Error('No se pudo cargar ' + src)); };
+    document.head.appendChild(s);
+  });
+}
+
+async function paddleInit(status) {
+  if (PADDLE.rec) return;
+  if (PADDLE.loading) return PADDLE.loading;
+  PADDLE.loading = (async () => {
+    let lastErr;
+    for (const base of paddleBases()) {
+      try {
+        status('Cargando el motor de lectura...');
+        if (typeof ort === 'undefined') await loadScriptOnce(base + PADDLE_FILES.ort);
+        ort.env.wasm.wasmPaths = base + 'vendor/ort/';
+        ort.env.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 2) : 1;
+        const total = PADDLE_FILES.det.size + PADDLE_FILES.rec.size;
+        let doneDet = 0;
+        const det = await (await paddleFetch(base + PADDLE_FILES.det.path, g => { doneDet = g; status(`Descargando el modelo de lectura (solo la primera vez)... ${Math.round(100 * g / total)} %`, g / total); })).arrayBuffer();
+        doneDet = PADDLE_FILES.det.size;
+        const rec = await (await paddleFetch(base + PADDLE_FILES.rec.path, g => status(`Descargando el modelo de lectura (solo la primera vez)... ${Math.round(100 * (doneDet + g) / total)} %`, (doneDet + g) / total))).arrayBuffer();
+        const dict = await (await paddleFetch(base + PADDLE_FILES.dict)).text();
+        status('Preparando el modelo...');
+        const opts = { executionProviders: ['wasm'], graphOptimizationLevel: 'all' };
+        PADDLE.det = await ort.InferenceSession.create(det, opts);
+        PADDLE.rec = await ort.InferenceSession.create(rec, opts);
+        // Índice 0 = separador CTC; luego cada línea del diccionario; al final, el espacio
+        PADDLE.chars = ['', ...dict.split('\n').filter(c => c !== ''), ' '];
+        PADDLE.base = base;
+        return;
+      } catch (e) { lastErr = e; PADDLE.det = PADDLE.rec = null; }
+    }
+    throw lastErr || new Error('PaddleOCR no disponible');
+  })();
+  try { await PADDLE.loading; } finally { PADDLE.loading = null; }
+}
+
+// Detección DB: mapa de probabilidad de texto -> componentes conexos -> cajas giradas (cx, cy, w, h, ángulo)
+async function paddleDetect(src, limit) {
+  const W = src.width, H = src.height;
+  let r = Math.min(1, limit / Math.max(W, H));
+  r = Math.min(r, Math.sqrt(3.0e6 / (W * H)));
+  const nw = Math.max(32, Math.round(W * r / 32) * 32), nh = Math.max(32, Math.round(H * r / 32) * 32);
+  const cv = document.createElement('canvas'); cv.width = nw; cv.height = nh;
+  const cx = cv.getContext('2d', { willReadFrequently: true });
+  cx.imageSmoothingQuality = 'high'; cx.drawImage(src, 0, 0, nw, nh);
+  const px = cx.getImageData(0, 0, nw, nh).data, N = nw * nh;
+  const inp = new Float32Array(3 * N), mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225];
+  for (let i = 0; i < N; i++) for (let c = 0; c < 3; c++) inp[c * N + i] = (px[i * 4 + c] / 255 - mean[c]) / std[c];
+  const res = await PADDLE.det.run({ [PADDLE.det.inputNames[0]]: new ort.Tensor('float32', inp, [1, 3, nh, nw]) });
+  const prob = res[PADDLE.det.outputNames[0]].data;
+  // Etiquetado de componentes (4-vecinos) con estadísticas para su orientación
+  const lab = new Int32Array(N), stack = new Int32Array(N);
+  const comps = [];
+  for (let i = 0; i < N; i++) {
+    if (lab[i] || prob[i] <= 0.3) continue;
+    const id = comps.length + 1; let sp = 0, n = 0, sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0, top = 0;
+    stack[top++] = i; lab[i] = id;
+    while (top) {
+      const j = stack[--top], x = j % nw, y = (j - x) / nw;
+      n++; sp += prob[j]; sx += x; sy += y; sxx += x * x; syy += y * y; sxy += x * y;
+      if (x > 0 && !lab[j - 1] && prob[j - 1] > 0.3) { lab[j - 1] = id; stack[top++] = j - 1; }
+      if (x < nw - 1 && !lab[j + 1] && prob[j + 1] > 0.3) { lab[j + 1] = id; stack[top++] = j + 1; }
+      if (y > 0 && !lab[j - nw] && prob[j - nw] > 0.3) { lab[j - nw] = id; stack[top++] = j - nw; }
+      if (y < nh - 1 && !lab[j + nw] && prob[j + nw] > 0.3) { lab[j + nw] = id; stack[top++] = j + nw; }
+    }
+    comps.push({ n, sp, sx, sy, sxx, syy, sxy, u0: Infinity, u1: -Infinity, v0: Infinity, v1: -Infinity });
+  }
+  const fx = W / nw, fy = H / nh;
+  for (const c of comps) {
+    if (c.n < 10 || c.sp / c.n < 0.5) { c.skip = true; continue; }
+    const mx = c.sx / c.n, my = c.sy / c.n;
+    const vxx = c.sxx / c.n - mx * mx, vyy = c.syy / c.n - my * my, vxy = c.sxy / c.n - mx * my;
+    // El ángulo se calcula en píxeles de la imagen original (escalas x e y pueden diferir un poco)
+    c.ang = 0.5 * Math.atan2(2 * vxy * fx * fy, vxx * fx * fx - vyy * fy * fy);
+    c.mx = mx * fx; c.my = my * fy; c.ca = Math.cos(c.ang); c.sa = Math.sin(c.ang);
+  }
+  for (let j = 0; j < N; j++) {
+    const id = lab[j]; if (!id) continue;
+    const c = comps[id - 1]; if (c.skip) continue;
+    const x = (j % nw) * fx - c.mx, y = Math.floor(j / nw) * fy - c.my;
+    const u = x * c.ca + y * c.sa, v = -x * c.sa + y * c.ca;
+    if (u < c.u0) c.u0 = u; if (u > c.u1) c.u1 = u; if (v < c.v0) c.v0 = v; if (v > c.v1) c.v1 = v;
+  }
+  const boxes = [];
+  for (const c of comps) {
+    if (c.skip) continue;
+    const u0 = c.u0 - fx / 2, u1 = c.u1 + fx / 2, v0 = c.v0 - fy / 2, v1 = c.v1 + fy / 2;
+    let bw = u1 - u0, bh = v1 - v0;
+    const d = bw * bh * 1.2 / (2 * (bw + bh));   // "unclip": recupera el borde de la letra que el modelo encoge
+    bw += 2 * d; bh += 2 * d;
+    if (bh < 6) continue;
+    const uc = (u0 + u1) / 2, vc = (v0 + v1) / 2;
+    boxes.push({ cx: c.mx + uc * c.ca - vc * c.sa, cy: c.my + uc * c.sa + vc * c.ca, w: bw, h: bh, ang: c.ang });
+  }
+  return boxes;
+}
+
+// Reconocimiento: endereza cada línea a 48 px de alto y decodifica con CTC
+async function paddleRecognize(src, boxes, onLine) {
+  const out = [];
+  const cv = document.createElement('canvas'); const cx = cv.getContext('2d', { willReadFrequently: true });
+  for (let b = 0; b < boxes.length; b++) {
+    const { cx: x0, cy: y0, w, h, ang } = boxes[b];
+    const nw = Math.min(3200, Math.max(8, Math.ceil(48 * w / h))), k = 48 / h;
+    const ca = Math.cos(ang), sa = Math.sin(ang);
+    cv.width = nw; cv.height = 48;
+    cx.setTransform(1, 0, 0, 1, 0, 0); cx.fillStyle = '#fff'; cx.fillRect(0, 0, nw, 48);
+    const a = ca * k, c = sa * k, bb = -sa * k, d = ca * k;
+    cx.setTransform(a, bb, c, d, nw / 2 - (a * x0 + c * y0), 24 - (bb * x0 + d * y0));
+    cx.imageSmoothingQuality = 'high'; cx.drawImage(src, 0, 0);
+    const px = cx.getImageData(0, 0, nw, 48).data, N = nw * 48;
+    const inp = new Float32Array(3 * N);
+    for (let i = 0; i < N; i++) for (let ch = 0; ch < 3; ch++) inp[ch * N + i] = (px[i * 4 + ch] / 255 - 0.5) / 0.5;
+    const res = await PADDLE.rec.run({ [PADDLE.rec.inputNames[0]]: new ort.Tensor('float32', inp, [1, 3, 48, nw]) });
+    const t = res[PADDLE.rec.outputNames[0]], [, T, C] = t.dims, p = t.data;
+    let s = '', last = -1, sc = 0, nc = 0;
+    for (let i = 0; i < T; i++) {
+      let best = 0, bv = -Infinity;
+      for (let j = 0; j < C; j++) { const v = p[i * C + j]; if (v > bv) { bv = v; best = j; } }
+      if (best !== last && best !== 0) { s += PADDLE.chars[best] || ''; sc += bv; nc++; }
+      last = best;
+    }
+    out.push({ x0: x0 - w / 2, y0: y0 - h / 2, x1: x0 + w / 2, y1: y0 + h / 2, text: s.trim(), conf: nc ? sc / nc : 0 });
+    if (onLine) onLine(b + 1, boxes.length);
+  }
+  return out;
+}
+
+// Ordena las líneas leídas de arriba abajo y de izquierda a derecha
+function paddleOrder(items) {
+  const it = items.filter(r => r.text && r.conf > 0.5).sort((a, b) => (a.y0 + a.y1) - (b.y0 + b.y1));
+  const lines = [];
+  for (const r of it) {
+    const cy = (r.y0 + r.y1) / 2, h = r.y1 - r.y0, L = lines[lines.length - 1];
+    if (L && Math.abs(cy - L.cy) < 0.5 * Math.min(h, L.h)) L.items.push(r); else lines.push({ cy, h, items: [r] });
+  }
+  return lines.map(l => l.items.sort((a, b) => a.x0 - b.x0).map(r => r.text).join(' ')).join('\n');
+}
+
+async function paddleRead(src, status, limit = 1280) {
+  status('Buscando las líneas de texto...');
+  const boxes = await paddleDetect(src, limit);
+  const items = await paddleRecognize(src, boxes, (i, n) => status(`Leyendo el texto... línea ${i} de ${n}`, i / n));
+  const conf = items.length ? items.reduce((s, r) => s + r.conf, 0) / items.length : 0;
+  return { text: paddleOrder(items), confidence: Math.round(conf * 100) };
+}
+
+async function tesseractRead(pre, imageSource, lang, status) {
+  if (typeof Tesseract === 'undefined') throw new Error('Tesseract no disponible');
+  const worker = await Tesseract.createWorker(lang, 1, {
+    logger: m => {
+      if (m.status === 'recognizing text') status(`Leyendo el texto... ${Math.round(m.progress * 100)} %`, m.progress);
+      else if (m.status) status('Cargando el modelo del idioma (la primera vez puede tardar)...');
+    }
+  });
   try {
-    let pre = null;
-    try { pre = await preprocessImage(imageSource); } catch (e) { /* si el navegador no lo permite, se usa la foto original */ }
-    worker = await Tesseract.createWorker(lang, 1, {
-      logger: m => {
-        if (m.status === 'recognizing text') { status.textContent = `Leyendo el texto... ${Math.round(m.progress * 100)} %`; bar.style.width = `${Math.round(m.progress * 100)}%`; }
-        else if (m.status) { status.textContent = 'Cargando el modelo del idioma (la primera vez puede tardar)...'; }
-      }
-    });
     // Modo "un bloque de texto": es el que mejor lee listas de ingredientes recortadas
     await worker.setParameters({ tessedit_pageseg_mode: '6', preserve_interword_spaces: '1' });
     let ret = await worker.recognize(pre ? pre.crop : imageSource);
     const looksBad = r => (r.data.text || '').replace(/\s/g, '').length < 25 || (r.data.confidence || 0) < 45;
     if (pre && looksBad(ret)) {
-      // Segundo intento: imagen completa con detección automática de bloques
-      status.textContent = 'Segundo intento con la imagen completa...';
+      status('Segundo intento con la imagen completa...');
       await worker.setParameters({ tessedit_pageseg_mode: '3' });
       const ret2 = await worker.recognize(pre.full);
       if ((ret2.data.text || '').length > (ret.data.text || '').length) ret = ret2;
     }
+    return { text: ret.data.text || '', confidence: Math.round(ret.data.confidence || 0) };
+  } finally { await worker.terminate(); }
+}
+
+function getOcrEngine() { try { return localStorage.getItem('ocrEngine') || 'paddle'; } catch (e) { return 'paddle'; } }
+function onOcrEngineChange() {
+  const v = document.getElementById('ocr-engine').value;
+  try { localStorage.setItem('ocrEngine', v); } catch (e) {}
+  document.getElementById('ocr-lang-row').classList.toggle('hidden', v !== 'tesseract');
+  document.getElementById('ocr-engine-note').textContent = v === 'paddle'
+    ? 'Reconoce los 7 idiomas sin elegir. La primera vez descarga unos 24 MB.'
+    : 'Más rápido y ligero, pero falla más con fotos. Elige el idioma de la etiqueta.';
+}
+
+// Texto leído por el OCR: se puede corregir a mano antes de analizarlo
+let lastOcrRaw = '';
+function autoGrow(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight + 2, 480) + 'px'; }
+function applyOcrText(silent) {
+  const raw = cleanOcrText(document.getElementById('ocr-raw-text').value || '');
+  if (!raw) { showToast('El texto está vacío.', 'warning'); return; }
+  let finalText = raw;
+  if (document.getElementById('ocr-only-ingredients').checked) {
+    const sec = extractIngredientsSection(raw);
+    finalText = sec.text;
+    if (!sec.found && !silent) showToast('No encontré la palabra «Ingredientes»: se usa todo el texto leído.', 'warning');
+  }
+  const ta = document.getElementById('label-textarea');
+  ta.value = finalText; autoGrow(ta);
+  analyzeLabelLocal();
+  if (!silent) showToast('Texto actualizado y analizado de nuevo.', 'success');
+}
+function resetOcrText() {
+  const ta = document.getElementById('ocr-raw-text');
+  ta.value = lastOcrRaw; autoGrow(ta);
+  applyOcrText(true);
+}
+// Si se corrige el texto de la etiqueta con un análisis ya en pantalla, se vuelve a analizar al dejar de escribir
+let reanalysisTimer = null;
+function scheduleReanalysis() {
+  clearTimeout(reanalysisTimer);
+  const res = document.getElementById('scanner-results');
+  if (!res || res.classList.contains('hidden')) return;
+  reanalysisTimer = setTimeout(() => { if (document.getElementById('label-textarea').value.trim()) analyzeLabelLocal(); }, 900);
+}
+
+async function processImageWithOCR(imageSource) {
+  const engine = document.getElementById('ocr-engine').value;
+  const lang = document.getElementById('ocr-lang').value;
+  const loading = document.getElementById('ocr-loading');
+  const statusEl = document.getElementById('ocr-status-text');
+  const bar = document.getElementById('ocr-progress');
+  const status = (t, p) => { statusEl.textContent = t; if (p !== undefined) bar.style.width = `${Math.round(p * 100)}%`; };
+  loading.classList.remove('hidden');
+  bar.style.width = '0%';
+  status('Preparando la imagen...');
+  try {
+    let pre = null;
+    try { pre = await preprocessImage(imageSource); } catch (e) { /* si el navegador no lo permite, se usa la foto original */ }
+    let ret = null, used = engine;
+    if (engine === 'paddle') {
+      try {
+        await paddleInit(status);
+        let src = pre ? pre.crop : await imageToCanvas(imageSource, 2400);
+        ret = await paddleRead(src, status);
+        if (pre && ret.text.replace(/\s/g, '').length < 25) {
+          status('Segundo intento con la imagen completa...');
+          const r2 = await paddleRead(pre.full, status, 1600);
+          if (r2.text.length > ret.text.length) ret = r2;
+        }
+      } catch (e) {
+        console.warn('PaddleOCR no disponible, se usa Tesseract', e);
+        showToast('No se pudo usar PaddleOCR en este dispositivo: se usa Tesseract.', 'warning');
+        used = 'tesseract';
+      }
+    }
+    if (!ret) ret = await tesseractRead(pre, imageSource, used === engine ? lang : 'spa', status);
+
     const preview = document.getElementById('ocr-preview');
     if (preview && pre) { preview.src = pre.crop.toDataURL('image/jpeg', 0.8); preview.classList.remove('hidden'); }
-    const raw = cleanOcrText(ret.data.text || '');
-    document.getElementById('ocr-raw-text').textContent = ret.data.text || '';
-    document.getElementById('ocr-raw-box').classList.remove('hidden');
-    let finalText = raw;
-    if (document.getElementById('ocr-only-ingredients').checked) {
-      const sec = extractIngredientsSection(raw);
-      finalText = sec.text;
-      if (!sec.found) showToast('No encontré la palabra «Ingredientes»: se usa todo el texto leído.', 'warning');
-    }
-    document.getElementById('label-textarea').value = finalText;
-    if (ret.data.confidence && ret.data.confidence < 60) showToast(`Lectura poco fiable (${Math.round(ret.data.confidence)} %). Revisa el texto o repite la foto.`, 'warning');
-    else showToast('Texto extraído. Revísalo antes de fiarte del análisis.', 'success');
-    analyzeLabelLocal();
+    lastOcrRaw = ret.text.trim();
+    const rawTa = document.getElementById('ocr-raw-text');
+    rawTa.value = lastOcrRaw;
+    document.getElementById('ocr-engine-used').textContent = (used === 'paddle' ? 'PaddleOCR' : 'Tesseract') + (ret.confidence ? ` · confianza ${ret.confidence} %` : '');
+    const box = document.getElementById('ocr-raw-box');
+    box.classList.remove('hidden'); autoGrow(rawTa);
+    if (!lastOcrRaw) { showToast('No se encontró texto en la foto. Prueba más cerca y con más luz.', 'warning'); return; }
+    applyOcrText(true);
+    if (document.getElementById('ocr-only-ingredients').checked && !extractIngredientsSection(cleanOcrText(lastOcrRaw)).found)
+      showToast('No encontré la palabra «Ingredientes»: se usa todo el texto leído. Puedes corregirlo arriba.', 'warning');
+    else if (ret.confidence && ret.confidence < 60) showToast(`Lectura poco fiable (${ret.confidence} %). Revisa el texto o repite la foto.`, 'warning');
+    else showToast('Texto extraído. Revísalo y corrígelo si hace falta.', 'success');
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (err) {
+    console.error(err);
     showToast('No se pudo leer la imagen. Prueba con más luz o escribe el texto.', 'warning');
   } finally {
-    if (worker) await worker.terminate();
     loading.classList.add('hidden');
   }
+}
+
+// Dibuja una imagen (archivo o blob) en un canvas, con el lado largo limitado
+async function imageToCanvas(source, maxSide) {
+  const bmp = await createImageBitmap(source);
+  const r = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * r); c.height = Math.round(bmp.height * r);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return c;
 }
 
 async function openCameraModal() {
@@ -1775,6 +2064,7 @@ function renderSources() {
 
 window.addEventListener('DOMContentLoaded', () => {
   if (!window.isSecureContext) { const h = document.getElementById('ocr-secure-hint'); if (h) h.classList.remove('hidden'); }
+  const eng = document.getElementById('ocr-engine'); if (eng) { eng.value = getOcrEngine(); onOcrEngineChange(); }
   renderFilters();
   renderSources();
   switchView('escaner');

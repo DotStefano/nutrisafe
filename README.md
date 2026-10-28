@@ -34,7 +34,7 @@ Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear 
 
 | | |
 |---|---|
-| 📷 **Foto de la etiqueta** | Lee la lista de ingredientes con la cámara (OCR), corrige la iluminación y recorta el bloque de texto automáticamente. |
+| 📷 **Foto de la etiqueta** | Lee la lista de ingredientes con PaddleOCR (PP-OCRv5), directamente en tu móvil. Reconoce los 7 idiomas sin elegir ninguno, aguanta fotos torcidas o con mala luz, y tiene Tesseract de respaldo. **El texto leído se puede corregir** antes de analizarlo. |
 | 🏷️ **Código de barras** | Busca el producto en Open Food Facts: ingredientes, información nutricional, Nutri-Score y NOVA. |
 | ✍️ **Pegar o escribir** | Analiza una lista copiada y entiende paréntesis, porcentajes, "puede contener trazas de…", etc. |
 | 🔎 **Buscador** | Unos 3 500 ingredientes, aditivos (E-numbers) y nutrientes con sus sinónimos en 7 idiomas: es, en, fr, nl, de, it y pt. |
@@ -47,11 +47,12 @@ Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear 
 - **Comisión Europea:** lista de aditivos autorizados (Anexo II del Reglamento (CE) 1333/2008) y formas autorizadas de vitaminas, minerales y otras sustancias (Reglamento (CE) 1925/2006, Directiva 2002/46/CE y Reglamento (UE) 609/2013).
 - **EFSA:** OpenFoodTox, con las IDA y otros valores de referencia.
 - **OMS/FAO:** evaluaciones del JECFA.
+- **OCR:** [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) (modelos PP-OCRv5, licencia Apache-2.0) sobre [ONNX Runtime Web](https://onnxruntime.ai/) (MIT), con [Tesseract.js](https://tesseract.projectnaptha.com/) (Apache-2.0) como respaldo.
 - **Open Food Facts:** taxonomías de ingredientes, aditivos y alérgenos, y la base de productos. Licencia [ODbL](https://opendatacommons.org/licenses/odbl/).
 
 ## Privacidad
 
-Las fotos se procesan en tu propio dispositivo y no se suben a ningún servidor. El perfil y el historial se guardan solo en tu navegador. La única consulta externa es el código de barras, que se envía a Open Food Facts.
+Las fotos se procesan en tu propio dispositivo y no se suben a ningún servidor. La primera vez la app descarga los modelos de lectura (unos 24 MB) y después los guarda en el navegador. El perfil y el historial se guardan solo en tu navegador. La única consulta externa es el código de barras, que se envía a Open Food Facts.
 
 ## Aviso
 
