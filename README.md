@@ -41,6 +41,7 @@ Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear 
 | ⚠️ **Alérgenos** | Detecta los 14 alérgenos de declaración obligatoria en la UE (Reglamento 1169/2011). |
 | 👤 **Perfil** | Avisa de lo que quieres evitar: alérgenos, aditivos, ingredientes de origen animal (vegano o vegetariano)… |
 | 📊 **Comparar e historial** | Guarda los productos analizados y compáralos lado a lado. |
+| 🌍 **7 idiomas** | La app se muestra en el idioma del dispositivo (español, inglés, francés, neerlandés, alemán, italiano o portugués) y se puede cambiar en la cabecera. Las fichas, incluidos los nombres de los ingredientes, también se traducen. |
 
 ## Fuentes de datos
 
