@@ -36,6 +36,7 @@ Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear 
 |---|---|
 | 📷 **Foto de la etiqueta** | Lee la lista de ingredientes con PaddleOCR (PP-OCRv5), directamente en tu móvil. Reconoce los 7 idiomas sin elegir ninguno, aguanta fotos torcidas o con mala luz, y tiene Tesseract de respaldo. **El texto leído se puede corregir** antes de analizarlo. |
 | 🏷️ **Código de barras** | Busca el producto en Open Food Facts: ingredientes, información nutricional, Nutri-Score y NOVA. |
+| 🅰️ **Nutri-Score** | Calcula la letra con el algoritmo oficial de 2023 a partir de la tabla nutricional: escribiendo los valores, fotografiando la tabla o desde un producto de Open Food Facts. Muestra el desglose de puntos y qué cambio mejoraría la letra. |
 | ✍️ **Pegar o escribir** | Analiza una lista copiada y entiende paréntesis, porcentajes, "puede contener trazas de…", etc. |
 | 🔎 **Buscador** | Unos 3 500 ingredientes, aditivos (E-numbers) y nutrientes con sus sinónimos en 7 idiomas: es, en, fr, nl, de, it y pt. |
 | ⚠️ **Alérgenos** | Detecta los 14 alérgenos de declaración obligatoria en la UE (Reglamento 1169/2011). |
