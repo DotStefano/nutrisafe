@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NutriSafe - Analizador de Ingredientes</title>
 <meta name="description" content="Fotografía o escanea una etiqueta y entiende cada ingrediente, aditivo y alérgeno: estado en la UE, IDA de EFSA y JECFA, en 7 idiomas.">
-<meta name="theme-color" content="#059669">
+<meta name="theme-color" content="#264266">
 <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -24,7 +24,20 @@
 if (window.tailwind) tailwind.config = {
   darkMode: 'class',
   theme: { extend: {
-    fontFamily: { sans: ['Inter','sans-serif'], mono: ['JetBrains Mono','monospace'] },
+    fontFamily: { sans: ['"Source Sans 3"','Source Sans Pro','system-ui','sans-serif'], serif: ['"Source Serif 4"','Georgia','serif'], mono: ['"IBM Plex Mono"','ui-monospace','monospace'] },
+    colors: {
+      // Azul marino institucional (color de marca)
+      brand: { 50:'#f3f6fa', 100:'#e3e9f2', 200:'#c6d3e4', 300:'#9cb2cf', 400:'#6c8ab3', 500:'#4a6b96', 600:'#33547c', 700:'#264266', 800:'#1d3452', 900:'#162840', 950:'#0d1828' },
+      // Verde sobrio para "correcto" o "riesgo bajo"
+      ok: { 50:'#f2f7f3', 100:'#e0ede3', 200:'#c0dac7', 300:'#93bf9f', 400:'#5f9c70', 500:'#3f7f52', 600:'#2f6741', 700:'#265335', 800:'#1f422b', 900:'#183522' },
+      // Grises cálidos, tono papel
+      slate: { 50:'#f8f7f4', 100:'#f1efea', 200:'#e3e0d8', 300:'#cfcac0', 400:'#a39d92', 500:'#78726a', 600:'#5b564f', 700:'#45413c', 800:'#2c2a27', 900:'#1d1c1a', 950:'#121110' },
+      amber: { 50:'#fbf7ee', 100:'#f5ebd2', 200:'#ebd5a3', 300:'#dcb86c', 400:'#c99a40', 500:'#b07f27', 600:'#93661f', 700:'#764f1c', 800:'#5f401b', 900:'#4e3519' },
+      red: { 50:'#fbf3f3', 100:'#f6e2e2', 200:'#ecc5c5', 300:'#dc9c9c', 400:'#c46b6b', 500:'#a84848', 600:'#8d3535', 700:'#742b2c', 800:'#5f2627', 900:'#4f2223' },
+      nutriA: '#038141', nutriB: '#85bb2f', nutriC: '#fecb02', nutriD: '#ee8100', nutriE: '#e63e11'
+    },
+    borderRadius: { lg: '0.3rem', xl: '0.4rem', '2xl': '0.5rem', '3xl': '0.65rem' },
+    fontWeight: { extrabold: '700', black: '700' },
     animation: { fadeIn: 'fadeIn 0.3s ease-in-out forwards' },
     keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
   } }
@@ -32,11 +45,17 @@ if (window.tailwind) tailwind.config = {
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
-<style>body{font-family:'Inter',sans-serif}</style>
+<style>
+body{font-family:'Source Sans 3','Source Sans Pro',system-ui,sans-serif;font-feature-settings:'kern','liga'}
+h1,h2,h3,h4,.font-serif{font-family:'Source Serif 4',Georgia,serif;letter-spacing:-0.005em}
+h1,h2,h3{font-weight:600}
+.dark .text-brand-600,.dark .text-brand-700{color:#9cb2cf}
+.dark .text-brand-800{color:#c6d3e4}
+</style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
 
@@ -46,11 +65,11 @@ if (window.tailwind) tailwind.config = {
 <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
     <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('escaner')">
-      <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/25">
+      <div class="w-10 h-10 rounded-2xl bg-brand-700 flex items-center justify-center text-white">
         <i class="ph-bold ph-shield-check text-xl"></i>
       </div>
       <div>
-        <h1 class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">NutriSafe</h1>
+        <h1 class="font-extrabold text-lg tracking-tight text-brand-800 dark:text-brand-200">NutriSafe</h1>
         <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium -mt-1"><span id="header-count">—</span> ingredientes y aditivos catalogados</p>
       </div>
     </div>
@@ -61,7 +80,7 @@ if (window.tailwind) tailwind.config = {
       <button onclick="switchView('autoridades')" id="nav-btn-autoridades"><i class="ph-bold ph-info"></i><span>Acerca de</span></button>
     </nav>
     <div class="flex items-center gap-2">
-    <button onclick="openProfileModal()" class="relative h-10 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-2 text-xs font-bold transition" title="Mi perfil">
+    <button onclick="openProfileModal()" class="relative h-10 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-2 text-xs font-bold transition" title="Mi perfil">
       <i class="ph-bold ph-user-circle text-lg"></i><span class="hidden sm:inline">Mi perfil</span>
       <span id="profile-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-white dark:border-slate-900"></span>
     </button>
@@ -89,7 +108,7 @@ if (window.tailwind) tailwind.config = {
       <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div class="relative w-full md:w-96">
           <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
-          <input type="text" id="search-input" oninput="handleSearchInput(this.value)" placeholder="Nombre, código E o CAS (ES, EN, FR, NL, DE, IT, PT)" class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+          <input type="text" id="search-input" oninput="handleSearchInput(this.value)" placeholder="Nombre, código E o CAS (ES, EN, FR, NL, DE, IT, PT)" class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
           <button onclick="clearSearch()" id="clear-search-btn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"><i class="ph-bold ph-x text-base"></i></button>
         </div>
         <div id="lang-buttons" class="flex items-center gap-1 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
@@ -109,9 +128,9 @@ if (window.tailwind) tailwind.config = {
     <div class="max-w-3xl mx-auto space-y-6">
       <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
         <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30"><i class="ph-bold ph-barcode text-3xl"></i></div>
+          <div class="w-14 h-14 rounded-2xl bg-brand-700 flex items-center justify-center text-white"><i class="ph-bold ph-barcode text-3xl"></i></div>
           <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Base de datos abierta</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Base de datos abierta</span>
             <h2 class="text-2xl sm:text-3xl font-extrabold">Open Food Facts</h2>
           </div>
         </div>
@@ -119,10 +138,10 @@ if (window.tailwind) tailwind.config = {
         <div class="flex flex-col sm:flex-row gap-3">
           <div class="relative flex-grow">
             <i class="ph-bold ph-barcode absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
-            <input type="text" inputmode="numeric" id="barcode-input" placeholder="Ej.: 3017620422003" class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm font-mono" onkeydown="if(event.key==='Enter')fetchProductByBarcode()">
+            <input type="text" inputmode="numeric" id="barcode-input" placeholder="Ej.: 3017620422003" class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm font-mono" onkeydown="if(event.key==='Enter')fetchProductByBarcode()">
           </div>
-          <button onclick="fetchProductByBarcode()" class="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2"><i class="ph-bold ph-magnifying-glass text-base"></i><span>Consultar</span></button>
-          <button onclick="startBarcodeScannerModal()" class="px-5 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-xs transition flex items-center justify-center gap-2"><i class="ph-bold ph-scan text-base text-emerald-500"></i><span>Escanear</span></button>
+          <button onclick="fetchProductByBarcode()" class="px-6 py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition flex items-center justify-center gap-2"><i class="ph-bold ph-magnifying-glass text-base"></i><span>Consultar</span></button>
+          <button onclick="startBarcodeScannerModal()" class="px-5 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-xs transition flex items-center justify-center gap-2"><i class="ph-bold ph-scan text-base text-brand-500"></i><span>Escanear</span></button>
         </div>
         <div class="space-y-2 pt-2">
           <span class="text-xs font-bold text-slate-400 uppercase">Ejemplos:</span>
@@ -143,9 +162,9 @@ if (window.tailwind) tailwind.config = {
     <div class="max-w-3xl mx-auto space-y-6">
       <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
         <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30"><i class="ph-bold ph-scan text-3xl"></i></div>
+          <div class="w-14 h-14 rounded-2xl bg-brand-700 flex items-center justify-center text-white"><i class="ph-bold ph-scan text-3xl"></i></div>
           <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">OCR en el navegador</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">OCR en el navegador</span>
             <h2 class="text-2xl sm:text-3xl font-extrabold">Analizar etiqueta de ingredientes</h2>
           </div>
         </div>
@@ -166,31 +185,31 @@ if (window.tailwind) tailwind.config = {
           </select>
         </div>
         <label class="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
-          <input type="checkbox" id="ocr-only-ingredients" checked class="w-4 h-4 accent-emerald-600">
+          <input type="checkbox" id="ocr-only-ingredients" checked class="w-4 h-4 accent-brand-600">
           Quedarme solo con la lista de ingredientes (desde «Ingredientes:» hasta la tabla nutricional)
         </label>
         <div class="text-[11px] text-slate-500 leading-relaxed space-y-1">
           <p>Consejos: encuadra solo el bloque de ingredientes, con buena luz, sin reflejos y con el texto recto. En envases curvos, haz la foto de frente.</p>
           <p id="ocr-secure-hint" class="hidden text-amber-700 dark:text-amber-300">La cámara en directo solo funciona si la app se abre desde una dirección https o desde localhost. El botón «Fotografiar ingredientes» funciona igualmente.</p>
           <p>La primera vez se descarga el modelo de lectura (necesita conexión); después queda guardado en el navegador.</p>
-          <button onclick="openCameraModal()" class="text-emerald-700 dark:text-emerald-300 font-bold hover:underline">Usar la cámara en directo (ordenador)</button>
+          <button onclick="openCameraModal()" class="text-brand-700 dark:text-brand-300 font-bold hover:underline">Usar la cámara en directo (ordenador)</button>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label class="p-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-4 transition text-left cursor-pointer shadow-lg shadow-emerald-600/30">
+          <label class="p-5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-4 transition text-left cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl"><i class="ph-bold ph-camera"></i></div>
-            <div><h4 class="font-bold text-sm">Fotografiar ingredientes</h4><p class="text-xs text-emerald-50">Abre la cámara del teléfono</p></div>
+            <div><h4 class="font-bold text-sm">Fotografiar ingredientes</h4><p class="text-xs text-brand-50">Abre la cámara del teléfono</p></div>
             <input type="file" accept="image/*" capture="environment" onchange="handleImageUpload(event)" class="hidden">
           </label>
-          <label class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 flex items-center gap-4 transition text-left cursor-pointer">
-            <div class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-xl"><i class="ph-bold ph-image"></i></div>
+          <label class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-brand-500 flex items-center gap-4 transition text-left cursor-pointer">
+            <div class="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center text-xl"><i class="ph-bold ph-image"></i></div>
             <div><h4 class="font-bold text-sm">Subir imagen</h4><p class="text-xs text-slate-500">Elegir foto de la galería</p></div>
             <input type="file" accept="image/*" onchange="handleImageUpload(event)" class="hidden">
           </label>
         </div>
         <div id="ocr-loading" class="hidden p-6 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-center space-y-3">
-          <div class="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div class="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p id="ocr-status-text" class="text-xs font-bold text-slate-500">Procesando imagen...</p>
-          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"><div id="ocr-progress" class="h-full bg-emerald-600 transition-all" style="width:0%"></div></div>
+          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"><div id="ocr-progress" class="h-full bg-brand-600 transition-all" style="width:0%"></div></div>
         </div>
         <div id="ocr-raw-box" class="hidden p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20 space-y-3">
           <div class="flex items-start justify-between gap-3">
@@ -206,7 +225,7 @@ if (window.tailwind) tailwind.config = {
           </details>
           <textarea id="ocr-raw-text" rows="6" spellcheck="true" lang="es" oninput="autoGrow(this)" class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono text-[11px] leading-relaxed"></textarea>
           <div class="flex flex-wrap gap-2">
-            <button onclick="applyOcrText()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center gap-1.5"><i class="ph-bold ph-check"></i> Usar este texto</button>
+            <button onclick="applyOcrText()" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-extrabold text-xs flex items-center gap-1.5"><i class="ph-bold ph-check"></i> Usar este texto</button>
             <button onclick="resetOcrText()" class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-bold text-xs text-slate-600 dark:text-slate-300 flex items-center gap-1.5"><i class="ph-bold ph-arrow-counter-clockwise"></i> Deshacer cambios</button>
           </div>
         </div>
@@ -214,13 +233,13 @@ if (window.tailwind) tailwind.config = {
           <div class="flex items-center justify-between">
             <label class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Texto de la etiqueta (editable)</label>
             <div class="flex gap-3">
-              <button onclick="loadSampleLabel('embutido')" class="text-[10px] font-bold text-emerald-600 hover:underline">Ejemplo embutido</button>
-              <button onclick="loadSampleLabel('energetica')" class="text-[10px] font-bold text-emerald-600 hover:underline">Ejemplo bebida</button>
+              <button onclick="loadSampleLabel('embutido')" class="text-[10px] font-bold text-brand-600 hover:underline">Ejemplo embutido</button>
+              <button onclick="loadSampleLabel('energetica')" class="text-[10px] font-bold text-brand-600 hover:underline">Ejemplo bebida</button>
             </div>
           </div>
-          <textarea id="label-textarea" rows="4" oninput="autoGrow(this); scheduleReanalysis()" placeholder="Pega aquí los ingredientes o usa la cámara/foto..." class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-xs font-mono"></textarea>
+          <textarea id="label-textarea" rows="4" oninput="autoGrow(this); scheduleReanalysis()" placeholder="Pega aquí los ingredientes o usa la cámara/foto..." class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs font-mono"></textarea>
         </div>
-        <button onclick="analyzeLabelLocal()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2"><i class="ph-bold ph-shield-check text-base"></i><span>Analizar etiqueta</span></button>
+        <button onclick="analyzeLabelLocal()" class="w-full py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-extrabold text-xs transition flex items-center justify-center gap-2"><i class="ph-bold ph-shield-check text-base"></i><span>Analizar etiqueta</span></button>
       </div>
       <div id="scanner-results" class="hidden space-y-4"></div>
     </div>
@@ -230,9 +249,9 @@ if (window.tailwind) tailwind.config = {
   <section id="view-autoridades" class="hidden space-y-8 animate-fadeIn">
     <div class="max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
       <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30"><i class="ph-bold ph-info text-3xl"></i></div>
+        <div class="w-14 h-14 rounded-2xl bg-brand-700 flex items-center justify-center text-white"><i class="ph-bold ph-info text-3xl"></i></div>
         <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Cómo funciona</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Cómo funciona</span>
           <h2 class="text-2xl sm:text-3xl font-extrabold">Acerca de NutriSafe</h2>
         </div>
       </div>
@@ -258,7 +277,7 @@ if (window.tailwind) tailwind.config = {
 <div id="camera-modal" class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
   <div class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col">
     <div class="p-4 border-b border-slate-800 flex items-center justify-between text-white">
-      <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-bold ph-camera text-emerald-400"></i> Cámara</h3>
+      <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-bold ph-camera text-brand-400"></i> Cámara</h3>
       <button onclick="closeCameraModal()" class="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300"><i class="ph-bold ph-x text-base"></i></button>
     </div>
     <div class="relative bg-black flex items-center justify-center min-h-[300px]">
@@ -266,7 +285,7 @@ if (window.tailwind) tailwind.config = {
       <canvas id="camera-canvas" class="hidden"></canvas>
     </div>
     <div class="p-4 border-t border-slate-800 flex justify-center">
-      <button onclick="capturePhotoFromCamera()" class="px-8 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm flex items-center gap-2"><i class="ph-bold ph-aperture text-lg"></i><span>Capturar y leer</span></button>
+      <button onclick="capturePhotoFromCamera()" class="px-8 py-3 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-extrabold text-sm flex items-center gap-2"><i class="ph-bold ph-aperture text-lg"></i><span>Capturar y leer</span></button>
     </div>
   </div>
 </div>
@@ -275,7 +294,7 @@ if (window.tailwind) tailwind.config = {
 <div id="barcode-scanner-modal" class="fixed inset-0 z-50 hidden bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-4">
   <div class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col">
     <div class="p-4 border-b border-slate-800 flex items-center justify-between text-white">
-      <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-bold ph-barcode text-emerald-400"></i> Escáner de código de barras</h3>
+      <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-bold ph-barcode text-brand-400"></i> Escáner de código de barras</h3>
       <button onclick="closeBarcodeScannerModal()" class="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300"><i class="ph-bold ph-x text-base"></i></button>
     </div>
     <div class="relative bg-black flex items-center justify-center min-h-[350px]">
@@ -283,7 +302,7 @@ if (window.tailwind) tailwind.config = {
         <video class="w-full h-full object-cover" autoplay playsinline></video>
         <canvas class="drawingBuffer absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
       </div>
-      <div class="absolute inset-x-12 inset-y-24 border-2 border-emerald-500/60 rounded-2xl pointer-events-none flex items-center justify-center"><div class="w-full h-0.5 bg-red-500/80 animate-pulse"></div></div>
+      <div class="absolute inset-x-12 inset-y-24 border-2 border-brand-500/60 rounded-2xl pointer-events-none flex items-center justify-center"><div class="w-full h-0.5 bg-red-500/80 animate-pulse"></div></div>
     </div>
     <div class="p-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
       <span>Apunta la cámara al código de barras</span>
@@ -303,12 +322,12 @@ if (window.tailwind) tailwind.config = {
 <div id="profile-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-4" onclick="if(event.target===this)closeProfileModal()">
   <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full shadow-2xl my-8 animate-fadeIn">
     <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-      <h3 class="font-extrabold text-lg flex items-center gap-2"><i class="ph-bold ph-user-circle text-emerald-600"></i> Mi perfil</h3>
+      <h3 class="font-extrabold text-lg flex items-center gap-2"><i class="ph-bold ph-user-circle text-brand-600"></i> Mi perfil</h3>
       <button onclick="closeProfileModal()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700"><i class="ph-bold ph-x"></i></button>
     </div>
     <div id="profile-content" class="p-5 space-y-5"></div>
     <div class="p-5 border-t border-slate-200 dark:border-slate-800 flex justify-end">
-      <button onclick="closeProfileModal()" class="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm">Guardar</button>
+      <button onclick="closeProfileModal()" class="px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-sm">Guardar</button>
     </div>
   </div>
 </div>
@@ -763,7 +782,7 @@ function renderNodes(nodes, depth = 0) {
     const icon = n.children.length
       ? '<span class="text-slate-400">▸</span>'
       : ok && n.fuzzy ? '<span class="text-amber-600 font-bold" title="Coincidencia aproximada: posible error de lectura">≈</span>'
-      : ok ? '<span class="text-emerald-600 font-bold">✓</span>'
+      : ok ? '<span class="text-ok-600 font-bold">✓</span>'
       : n.ignored ? '<span class="text-slate-300">·</span>' : '<span class="text-slate-400 font-bold" title="No reconocido">?</span>';
     const chips = n.items.slice(0, 3).map(i => `<button onclick="openIngredientModal('${i.id}')" class="px-1.5 py-0.5 rounded-md text-[10px] font-bold border ${riskBadge(i).cls}">${escapeHtml(i.name)}</button>`).join(' ');
     return `<li class="text-xs leading-relaxed">
@@ -778,7 +797,7 @@ function renderNodes(nodes, depth = 0) {
 
 function structuredListBox(parsed) {
   const pct = parsed.total ? Math.round(100 * parsed.recognized / parsed.total) : 0;
-  const color = pct >= 80 ? 'bg-emerald-600' : pct >= 50 ? 'bg-amber-500' : 'bg-red-500';
+  const color = pct >= 80 ? 'bg-ok-600' : pct >= 50 ? 'bg-amber-500' : 'bg-red-500';
   return `<div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 space-y-3">
     <div class="flex items-center justify-between gap-3">
       <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Lista de ingredientes leída</h4>
@@ -817,7 +836,7 @@ const CHILD_WARNING_COLOURS = ['e102', 'e104', 'e110', 'e122', 'e124', 'e129'];
 const LEVEL_CLS = {
   alto: 'bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-300',
   medio: 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-300',
-  ok: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300',
+  ok: 'bg-ok-500/10 border-ok-500/30 text-ok-700 dark:text-ok-300',
   nd: 'bg-slate-500/10 border-slate-500/30 text-slate-600 dark:text-slate-300'
 };
 const LEVEL_RANK = { alto: 3, medio: 2, ok: 1, nd: 0 };
@@ -891,12 +910,12 @@ function statusClass(s) {
   if (s === 'Prohibida') return 'bg-red-500/10 text-red-600';
   if (s === 'No listado') return 'bg-slate-500/10 text-slate-600 dark:text-slate-300';
   if (s.includes('restricciones')) return 'bg-amber-500/10 text-amber-600';
-  return 'bg-emerald-500/10 text-emerald-600';
+  return 'bg-ok-500/10 text-ok-600';
 }
 
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
-  const bg = type === 'success' ? 'bg-emerald-600' : type === 'warning' ? 'bg-amber-600' : 'bg-slate-900';
+  const bg = type === 'success' ? 'bg-brand-600' : type === 'warning' ? 'bg-amber-600' : 'bg-slate-900';
   const toast = document.createElement('div');
   toast.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2.5 animate-fadeIn text-white ${bg}`;
   toast.innerHTML = `<i class="ph-bold ph-info text-base"></i><span>${escapeHtml(message)}</span>`;
@@ -909,7 +928,7 @@ function showToast(message, type = 'info') {
 // =============================================================
 const NAV_ACTIVE = 'px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm';
 const NAV_IDLE = 'px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
-const MOB_ACTIVE = 'flex flex-col items-center gap-1 py-1 px-2 rounded-xl text-emerald-600 dark:text-emerald-400 font-bold text-[10px]';
+const MOB_ACTIVE = 'flex flex-col items-center gap-1 py-1 px-2 rounded-xl text-brand-600 dark:text-brand-400 font-bold text-[10px]';
 const MOB_IDLE = 'flex flex-col items-center gap-1 py-1 px-2 rounded-xl text-slate-500 dark:text-slate-400 font-semibold text-[10px]';
 
 function switchView(viewId) {
@@ -1012,11 +1031,11 @@ function renderIngredientsGrid() {
     return;
   }
   grid.innerHTML = visible.map(item => {
-    return `<div onclick="openIngredientModal('${item.id}')" class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 shadow-sm hover:shadow-md transition cursor-pointer space-y-4 flex flex-col justify-between">
+    return `<div onclick="openIngredientModal('${item.id}')" class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 shadow-sm hover:shadow-md transition cursor-pointer space-y-4 flex flex-col justify-between">
       <div class="space-y-2">
         <div class="flex items-center justify-between gap-2">
           <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">${escapeHtml(codeLabel(item))}</span>
-          ${item.generated ? '' : '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">Revisada</span>'}
+          ${item.generated ? '' : '<span class="px-2 py-0.5 rounded bg-brand-500/10 text-[10px] font-bold text-brand-700 dark:text-brand-300">Revisada</span>'}
         </div>
         <h4 class="text-lg font-extrabold pt-1">${escapeHtml(item.name)}</h4>
         <div class="flex flex-wrap gap-1">${indicatorChips(item)}</div>
@@ -1026,7 +1045,7 @@ function renderIngredientsGrid() {
           ${(item.allergens || []).map(a => `<span class="px-2 py-0.5 rounded bg-amber-500/15 text-[10px] font-bold text-amber-800 dark:text-amber-200">Alérgeno: ${escapeHtml(a)}</span>`).join('')}
         </div>
       </div>
-      <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+      <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-brand-600 dark:text-brand-400">
         <span>Ver dosis y aprobaciones</span><i class="ph-bold ph-arrow-right"></i>
       </div></div>`;
   }).join('') + (filtered.length > visible.length
@@ -1075,14 +1094,14 @@ function updateProfileButton() {
 function openProfileModal() {
   const box = document.getElementById('profile-content');
   const check = (key, label, help) => `<label class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 cursor-pointer">
-      <input type="checkbox" ${profile[key] ? 'checked' : ''} onchange="profile['${key}']=this.checked; saveProfile()" class="mt-0.5 w-4 h-4 accent-emerald-600">
+      <input type="checkbox" ${profile[key] ? 'checked' : ''} onchange="profile['${key}']=this.checked; saveProfile()" class="mt-0.5 w-4 h-4 accent-brand-600">
       <span><span class="text-sm font-bold block">${label}</span><span class="text-[11px] text-slate-500">${help}</span></span></label>`;
   box.innerHTML = `
     <div class="space-y-2">
       <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Alergias e intolerancias</h4>
       <p class="text-[11px] text-slate-500">Para celiaquía, marca «Cereales con gluten».</p>
       <div class="grid grid-cols-2 gap-2">${ALLERGEN_LABELS.map(a => `<label class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-semibold cursor-pointer">
-        <input type="checkbox" ${profile.allergens.includes(a) ? 'checked' : ''} onchange="toggleProfileAllergen('${a.replace(/'/g, "\\'")}', this.checked)" class="w-4 h-4 accent-emerald-600">${escapeHtml(a)}</label>`).join('')}</div>
+        <input type="checkbox" ${profile.allergens.includes(a) ? 'checked' : ''} onchange="toggleProfileAllergen('${a.replace(/'/g, "\\'")}', this.checked)" class="w-4 h-4 accent-brand-600">${escapeHtml(a)}</label>`).join('')}</div>
     </div>
     <div class="space-y-2">
       <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Dieta y situación</h4>
@@ -1153,10 +1172,10 @@ function profileAlertsBox(alerts) {
   if (profileIsEmpty()) {
     return `<div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 text-xs text-slate-500 flex items-center justify-between gap-3">
       <span>Configura tu perfil (alergias, dieta, embarazo, niños) para recibir avisos personalizados.</span>
-      <button onclick="openProfileModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold shrink-0">Mi perfil</button></div>`;
+      <button onclick="openProfileModal()" class="px-3 py-1.5 rounded-xl bg-brand-600 text-white font-bold shrink-0">Mi perfil</button></div>`;
   }
   if (!alerts.length) {
-    return `<div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-200 text-sm font-semibold">
+    return `<div class="p-4 rounded-2xl bg-brand-500/10 border border-brand-500/30 text-brand-800 dark:text-brand-200 text-sm font-semibold">
       Sin avisos para tu perfil en los ingredientes reconocidos.</div>`;
   }
   const high = alerts.some(a => a.level === 'alto');
@@ -1178,7 +1197,7 @@ function renderAnalysis(rawText, extraItems = []) {
 function ingredientCards(list) {
   const sorted = [...list].sort((x, y) => topLevel(y) - topLevel(x));  // primero lo más serio
   return `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">${sorted.map(f => `
-    <div onclick="openIngredientModal('${f.id}')" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2 cursor-pointer hover:border-emerald-500 transition">
+    <div onclick="openIngredientModal('${f.id}')" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2 cursor-pointer hover:border-brand-500 transition">
       <span class="font-mono text-xs font-bold text-slate-500">${escapeHtml(codeLabel(f))}</span>
       <h5 class="text-sm font-extrabold">${escapeHtml(f.name)}</h5>
       <div class="flex flex-wrap gap-1">${indicatorChips(f)}${(f.allergens || []).map(a => `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-200">Alérgeno: ${escapeHtml(a)}</span>`).join('')}</div>
@@ -1190,7 +1209,7 @@ function verdictBox(list, allergensFound = []) {
   const nHigh = list.filter(i => topLevel(i) === 3), nMid = list.filter(i => topLevel(i) === 2);
   const cls = nHigh.length ? 'bg-red-500/10 border-red-500/30 text-red-800 dark:text-red-200'
     : nMid.length ? 'bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-200'
-    : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-200';
+    : 'bg-ok-500/10 border-ok-500/30 text-ok-800 dark:text-ok-200';
   const title = nHigh.length ? 'Hay ingredientes que conviene revisar' : nMid.length ? 'Algunos ingredientes merecen atención' : 'Nada llamativo en los ingredientes reconocidos';
   const names = l => l.slice(0, 5).map(i => escapeHtml(i.name)).join(', ') + (l.length > 5 ? '…' : '');
   return `<div class="rounded-3xl p-5 border ${cls} space-y-2">
@@ -1210,17 +1229,17 @@ function verdictBox(list, allergensFound = []) {
 // =============================================================
 function testBarcode(code) { document.getElementById('barcode-input').value = code; fetchProductByBarcode(); }
 
-const NUTRI_COLORS = { A: 'bg-emerald-600', B: 'bg-teal-500', C: 'bg-amber-500', D: 'bg-orange-600', E: 'bg-red-600' };
+const NUTRI_COLORS = { A: 'bg-nutriA', B: 'bg-nutriB', C: 'bg-nutriC', D: 'bg-nutriD', E: 'bg-nutriE' };   // colores oficiales del Nutri-Score
 const NOVA_TEXT = {
-  1: ['Sin procesar o mínimamente procesado', 'bg-emerald-600'],
-  2: ['Ingrediente culinario procesado', 'bg-teal-500'],
+  1: ['Sin procesar o mínimamente procesado', 'bg-brand-600'],
+  2: ['Ingrediente culinario procesado', 'bg-brand-500'],
   3: ['Alimento procesado', 'bg-amber-500'],
   4: ['Ultraprocesado', 'bg-red-600'],
 };
 const NUTRIENTS_SHOWN = [
   ['fat', 'Grasas'], ['saturated-fat', 'Grasas saturadas'], ['sugars', 'Azúcares'], ['salt', 'Sal'],
 ];
-const LEVEL_TEXT = { low: ['Bajo', 'bg-emerald-500'], moderate: ['Medio', 'bg-amber-500'], high: ['Alto', 'bg-red-500'] };
+const LEVEL_TEXT = { low: ['Bajo', 'bg-brand-500'], moderate: ['Medio', 'bg-amber-500'], high: ['Alto', 'bg-red-500'] };
 
 function fmtNum(v) {
   return v === undefined || v === null || v === '' ? '—' : (Math.round(Number(v) * 10) / 10).toLocaleString('es-ES');
@@ -1260,7 +1279,7 @@ async function fetchProductByBarcode() {
   if (!/^\d{8,14}$/.test(code)) { showToast('Introduce un código de barras de 8 a 14 dígitos', 'warning'); return; }
   container.classList.remove('hidden');
   container.innerHTML = `<div class="p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
-    <div class="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+    <div class="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
     <p class="text-xs font-bold text-slate-500">Consultando Open Food Facts (${code})...</p></div>`;
 
   const fields = 'product_name,product_name_es,brands,image_front_small_url,ingredients_text,ingredients_text_es,nutriscore_grade,nova_group,additives_tags,allergens_tags,nutriments,nutrient_levels';
@@ -1300,7 +1319,7 @@ async function fetchProductByBarcode() {
           <div class="flex items-center gap-4">
             ${summary.img ? `<img src="${escapeHtml(summary.img)}" alt="" class="w-20 h-20 object-contain rounded-2xl border border-slate-200 dark:border-slate-800 bg-white">` : `<div class="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400"><i class="ph-bold ph-package text-3xl"></i></div>`}
             <div class="space-y-1">
-              <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">${escapeHtml(summary.brand || 'Marca desconocida')}</span>
+              <span class="text-xs font-bold text-brand-600 dark:text-brand-400 font-mono">${escapeHtml(summary.brand || 'Marca desconocida')}</span>
               <h3 class="text-xl sm:text-2xl font-extrabold">${escapeHtml(summary.name)}</h3>
               <p class="text-xs text-slate-500 font-mono">EAN: ${code}</p>
             </div>
@@ -1365,13 +1384,13 @@ function renderHistory() {
     <div class="flex items-center justify-between gap-2">
       <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Historial y favoritos</h4>
       <div class="flex gap-2">
-        ${compareSel.length === 2 ? '<button onclick="renderComparison()" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold">Comparar 2 productos</button>' : `<span class="text-[11px] text-slate-500 self-center">Marca 2 para comparar</span>`}
+        ${compareSel.length === 2 ? '<button onclick="renderComparison()" class="px-3 py-1.5 rounded-xl bg-brand-600 text-white text-xs font-bold">Comparar 2 productos</button>' : `<span class="text-[11px] text-slate-500 self-center">Marca 2 para comparar</span>`}
         <button onclick="clearHistory()" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold">Borrar</button>
       </div>
     </div>
     <ul class="divide-y divide-slate-100 dark:divide-slate-800">${list.map(h => `
       <li class="py-2 flex items-center gap-3">
-        <input type="checkbox" ${compareSel.includes(h.code) ? 'checked' : ''} onchange="toggleCompare('${h.code}', this.checked)" class="w-4 h-4 accent-emerald-600" title="Comparar">
+        <input type="checkbox" ${compareSel.includes(h.code) ? 'checked' : ''} onchange="toggleCompare('${h.code}', this.checked)" class="w-4 h-4 accent-brand-600" title="Comparar">
         <button onclick="toggleFavorite('${h.code}')" class="text-lg leading-none ${isFavorite(h.code) ? 'text-amber-500' : 'text-slate-300'}" title="Favorito">${isFavorite(h.code) ? '★' : '☆'}</button>
         <button onclick="testBarcode('${h.code}')" class="flex-1 text-left min-w-0">
           <span class="text-sm font-bold block truncate">${escapeHtml(h.name)}</span>
@@ -1387,7 +1406,7 @@ function renderHistory() {
 function renderComparison() {
   const [a, b] = compareSel.map(c => historyMem.find(h => h.code === c)).filter(Boolean);
   if (!a || !b) return;
-  const better = (x, y, lowerIsBetter = true) => (x === null || y === null || x === y) ? ['', ''] : ((x < y) === lowerIsBetter ? ['font-extrabold text-emerald-600', ''] : ['', 'font-extrabold text-emerald-600']);
+  const better = (x, y, lowerIsBetter = true) => (x === null || y === null || x === y) ? ['', ''] : ((x < y) === lowerIsBetter ? ['font-extrabold text-ok-600', ''] : ['', 'font-extrabold text-ok-600']);
   const row = (label, va, vb, cls = ['', '']) => `<tr class="border-t border-slate-100 dark:border-slate-800"><td class="py-1.5 pr-2 text-slate-500">${label}</td><td class="py-1.5 pr-2 ${cls[0]}">${va}</td><td class="py-1.5 ${cls[1]}">${vb}</td></tr>`;
   const nutriRank = g => g ? 'ABCDE'.indexOf(g) : null;
   let rows = row('Nutri-Score', a.nutri || '—', b.nutri || '—', better(nutriRank(a.nutri), nutriRank(b.nutri)));
@@ -2020,7 +2039,7 @@ function openIngredientModal(id) {
           </div>`).join('')}
         </div>
 
-        ${showDose ? `<div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-200 space-y-1">
+        ${showDose ? `<div class="p-4 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-900 dark:text-brand-200 space-y-1">
           <span class="text-xs font-extrabold uppercase tracking-wider block">Ingesta de referencia / IDA</span>
           <p class="text-xs font-semibold leading-relaxed">${escapeHtml(item.dose)}</p></div>` : ''}
 
@@ -2033,15 +2052,15 @@ function openIngredientModal(id) {
 
         ${item.uses.length ? `<div class="space-y-2">
           <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400 block">Usos habituales</span>
-          <div class="flex flex-wrap gap-2">${item.uses.map(u => `<span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-bold">${escapeHtml(u)}</span>`).join('')}</div>
+          <div class="flex flex-wrap gap-2">${item.uses.map(u => `<span class="px-3 py-1 rounded-full bg-brand-500/10 text-brand-700 dark:text-brand-300 text-xs font-bold">${escapeHtml(u)}</span>`).join('')}</div>
         </div>` : ''}
-        ${!item.generated && item.rec ? `<div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-200 text-xs font-semibold">Recomendación: ${escapeHtml(item.rec)}</div>` : ''}
+        ${!item.generated && item.rec ? `<div class="p-4 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-900 dark:text-brand-200 text-xs font-semibold">Recomendación: ${escapeHtml(item.rec)}</div>` : ''}
 
         ${langRows ? `<div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-slate-800 space-y-2">
           <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400 block">Nombres en etiquetas</span>${langRows}</div>` : ''}
 
         <div class="flex flex-wrap gap-2 pt-1 text-xs font-bold">
-          ${item.efsaUrl && /^https:\/\//.test(item.efsaUrl) && !(item.efsaOfficial && item.efsaOfficial.url === item.efsaUrl) ? `<a href="${escapeHtml(item.efsaUrl)}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20">Evaluación EFSA</a>` : ''}
+          ${item.efsaUrl && /^https:\/\//.test(item.efsaUrl) && !(item.efsaOfficial && item.efsaOfficial.url === item.efsaUrl) ? `<a href="${escapeHtml(item.efsaUrl)}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-brand-500/10 text-brand-700 dark:text-brand-300 hover:bg-brand-500/20">Evaluación EFSA</a>` : ''}
           ${pubchemUrl ? `<a href="${pubchemUrl}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700">PubChem</a>` : ''}
         </div>
       </div>
@@ -2057,8 +2076,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeIngre
 // =============================================================
 function renderSources() {
   document.getElementById('sources-grid').innerHTML = SOURCES.map(s => `
-    <a href="${s.url}" target="_blank" rel="noopener" class="p-5 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition space-y-2 block">
-      <h3 class="font-extrabold flex items-center gap-2"><i class="ph-bold ph-arrow-square-out text-emerald-500"></i>${escapeHtml(s.name)}</h3>
+    <a href="${s.url}" target="_blank" rel="noopener" class="p-5 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition space-y-2 block">
+      <h3 class="font-extrabold flex items-center gap-2"><i class="ph-bold ph-arrow-square-out text-brand-500"></i>${escapeHtml(s.name)}</h3>
       <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">${escapeHtml(s.desc)}</p></a>`).join('');
 }
 
