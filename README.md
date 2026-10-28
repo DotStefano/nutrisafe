@@ -6,7 +6,25 @@
   <a href="https://dotstefano.github.io/nutrisafe/"><b>Abrir la app →</b></a>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/estado-en%20desarrollo-f59e0b?style=flat-square" alt="Estado: en desarrollo">
+  <img src="https://img.shields.io/badge/idiomas-7-059669?style=flat-square" alt="7 idiomas">
+  <img src="https://img.shields.io/badge/datos-UE%20%C2%B7%20EFSA%20%C2%B7%20JECFA-14b8a6?style=flat-square" alt="Datos UE, EFSA y JECFA">
+</p>
+
 # NutriSafe
+
+> 🚧 **Proyecto en desarrollo.** La app ya se puede usar, pero sigue creciendo: pueden faltar ingredientes, la lectura de fotos puede fallar con etiquetas difíciles y algunas funciones cambiarán. Toda sugerencia o error que encuentres ayuda a mejorarla.
+
+## Por qué existe
+
+Las etiquetas de los alimentos no siempre hablan claro. El mismo ingrediente puede aparecer como **E-330**, **ácido cítrico** o **citric acid**. Un azúcar puede esconderse detrás de **jarabe de glucosa-fructosa**, **dextrosa** o **maltodextrina**.
+
+Con NutriSafe puedes **buscar los ingredientes de forma manual o fotografiando la etiqueta** y ver **con qué otros nombres aparecen en los envases**, en siete idiomas. Así puedes decidir su consumo de forma consciente e informada.
+
+**Un nombre comercial o técnico no debería ser una barrera para decidir sobre nuestra alimentación.**
+
+## Qué es
 
 **NutriSafe lee la etiqueta de un alimento y explica cada ingrediente, aditivo y alérgeno:** qué es, si está autorizado en la Unión Europea, su ingesta diaria admisible (IDA) y si encaja con tu perfil.
 
