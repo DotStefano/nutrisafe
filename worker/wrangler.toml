@@ -1,0 +1,6 @@
+name = "nutrisafe-usda"
+main = "usda-proxy.js"
+compatibility_date = "2026-10-01"
+
+# La clave de USDA NO va aquí: se guarda como secreto con
+#   npx wrangler secret put USDA_KEY
