@@ -38,7 +38,7 @@ Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear 
 | 🏷️ **Código de barras** | Busca el producto en Open Food Facts: ingredientes, información nutricional, Nutri-Score y NOVA. |
 | 🅰️ **Nutri-Score** | Calcula la letra con el algoritmo oficial de 2023 a partir de la tabla nutricional: escribiendo los valores, fotografiando la tabla, desde un producto de Open Food Facts o buscando un alimento genérico por su nombre (por ejemplo «hallulla» o «palta») en USDA FoodData Central. Muestra el desglose de puntos y qué cambio mejoraría la letra. |
 | ✍️ **Pegar o escribir** | Analiza una lista copiada y entiende paréntesis, porcentajes, "puede contener trazas de…", etc. |
-| 🔎 **Buscador** | Unos 3 500 ingredientes, aditivos (E-numbers) y nutrientes con sus sinónimos en 7 idiomas: es, en, fr, nl, de, it y pt. |
+| 🔎 **Buscador** | Unos 3 500 ingredientes, aditivos (E-numbers) y nutrientes con sus sinónimos en 7 idiomas: es, en, fr, nl, de, it y pt. Cada ficha indica en qué tipo de productos **suele encontrarse**, calculado con los productos de Open Food Facts. |
 | ⚠️ **Alérgenos** | Detecta los 14 alérgenos de declaración obligatoria en la UE (Reglamento 1169/2011) y señala qué ingrediente de la lista contiene cada uno. |
 | 🧩 **Nombres ocultos** | Agrupa los ingredientes que aparecen con muchos nombres: azúcares añadidos, edulcorantes, glutamatos, nitritos, grasas hidrogenadas, palma, fosfatos, colorantes de Southampton y cafeína. |
 | 🏭 **NOVA estimado** | Calcula el grado de procesado a partir de la lista de ingredientes con las reglas de Open Food Facts, y dice qué ingredientes lo deciden. |
