@@ -10,6 +10,10 @@
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="NutriSafe">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NutriSafe · Analizador de ingredientes">
 <meta property="og:description" content="Lee la etiqueta y entiende cada ingrediente, aditivo y alérgeno. Datos de la UE, EFSA y JECFA.">
@@ -3099,11 +3103,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const eng = document.getElementById('ocr-engine'); if (eng) { eng.value = getOcrEngine(); onOcrEngineChange(); }
   renderFilters();
   renderSources();
-  switchView('escaner');
+  // Accesos directos del icono (?view=barras…) y vista inicial
+  const startView = new URLSearchParams(location.search).get('view');
+  switchView(['escaner', 'barras', 'nutriscore', 'buscador', 'autoridades'].includes(startView) ? startView : 'escaner');
   renderIngredientsGrid();
   updateProfileButton();
   renderHistory();
   nsUpdate();
+  // Funcionamiento sin conexión (no en las pruebas automáticas)
+  if ('serviceWorker' in navigator && !navigator.webdriver && location.protocol === 'https:') {
+    navigator.serviceWorker.register('sw.js').catch(e => console.warn('Service worker no registrado', e));
+  }
 });
 </script>
 </body>
