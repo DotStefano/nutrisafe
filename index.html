@@ -1923,10 +1923,8 @@ function nsFillFromProduct() {
 }
 
 // ----- Búsqueda de alimentos genéricos en USDA FoodData Central (dominio público, CC0) -----
-// Intermediario (Cloudflare Worker, carpeta worker/ del repositorio) que guarda la clave de USDA fuera de la app.
-// Mientras no esté publicado (null), la app llama a USDA directamente con la clave.
-const USDA_PROXY = null;
-const USDA_KEY = 'LWnmNcMcFdjfHmnJKzMLB8HHdKDtDCcc9qMfRdBz';
+// Intermediario (Cloudflare Worker, carpeta worker/ del repositorio): guarda la clave de USDA fuera de la app
+const USDA_PROXY = 'https://nutrisafe-usda.s-simonettimacaya.workers.dev';
 // Palabras de comida en los 7 idiomas → término de búsqueda en inglés (USDA solo entiende inglés).
 // Frases antes que palabras sueltas; las claves van sin tildes y en minúsculas.
 const FOOD_PHRASES = {
@@ -2030,12 +2028,7 @@ async function nsSearchFood() {
   box.classList.remove('hidden');
   box.innerHTML = `<p class="text-xs text-slate-500 flex items-center gap-2"><span class="w-4 h-4 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></span>${escapeHtml(t('ns.searching', { q: en }))}</p>`;
   try {
-    // POST: la búsqueda por GET de USDA devuelve a veces un 400 con algunos filtros
-    const res = USDA_PROXY
-      ? await fetch(`${USDA_PROXY}/search`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: en }) })
-      : await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: en, dataType: ['Foundation', 'SR Legacy', 'Survey (FNDDS)'], pageSize: 50 }) });
+    const res = await fetch(`${USDA_PROXY}/search`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: en }) });
     if (res.status === 429) throw { limit: true };
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();

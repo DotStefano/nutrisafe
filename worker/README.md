@@ -18,7 +18,7 @@ Qué hace `usda-proxy.js`:
 3. En el panel: **Compute (Workers)** → **Workers & Pages** → **Create** → **Create Worker**, llámalo `nutrisafe-usda` y pulsa **Deploy**.
 4. Pulsa **Edit code**, borra el código de ejemplo, pega el contenido de `usda-proxy.js` y pulsa **Deploy**.
 5. En **Settings** → **Variables and Secrets** → **Add**: tipo **Secret**, nombre `USDA_KEY`, valor = tu clave nueva. Guarda.
-6. Copia la dirección del Worker (algo como `https://nutrisafe-usda.TU-NOMBRE.workers.dev`) y pon esa dirección en `USDA_PROXY` en `template.html`.
+6. Copia la dirección del Worker y ponla en `USDA_PROXY` en `template.html`. Ahora es `https://nutrisafe-usda.s-simonettimacaya.workers.dev`.
 
 ## O con la línea de comandos
 
