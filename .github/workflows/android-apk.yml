@@ -1,0 +1,77 @@
+# Genera el APK de Android (Trusted Web Activity) a partir de android/twa-manifest.json y lo publica en Releases.
+# Necesita dos secretos del repositorio: ANDROID_KEYSTORE_B64 (la clave de firma en base64) y ANDROID_KEYSTORE_PASSWORD.
+name: APK de Android
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/android-apk.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Comprobar los secretos
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          PW: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$KS" ] || [ -z "$PW" ]; then
+            echo "::error::Faltan los secretos ANDROID_KEYSTORE_B64 y ANDROID_KEYSTORE_PASSWORD (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
+      - name: Instalar Bubblewrap y configurarlo con el JDK y el SDK de Android del runner
+        run: |
+          npm install -g @bubblewrap/cli@1.27.0
+          mkdir -p ~/.bubblewrap
+          echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+
+      - name: Versión (un número nuevo en cada compilación)
+        working-directory: android
+        run: |
+          jq --argjson c "${{ github.run_number }}" --arg n "1.0.${{ github.run_number }}" \
+            '.appVersionCode = $c | .appVersionName = $n | .appVersion = $n' twa-manifest.json > m.json && mv m.json twa-manifest.json
+
+      - name: Generar el proyecto y compilar
+        working-directory: android
+        env:
+          BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_B64 }}" | base64 -d > android.keystore
+          bubblewrap update --skipVersionUpgrade
+          bubblewrap build --skipPwaValidation
+          mkdir -p ../out
+          cp app-release-signed.apk "../out/NutriSafe-1.0.${{ github.run_number }}.apk"
+          cp app-release-bundle.aab "../out/NutriSafe-1.0.${{ github.run_number }}.aab"
+          rm -f android.keystore
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NutriSafe-apk
+          path: out/*
+
+      - name: Publicar en Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="android-v1.0.${{ github.run_number }}"
+          gh release create "$TAG" out/* --title "NutriSafe para Android 1.0.${{ github.run_number }}" \
+            --notes "APK firmado (instalar en el teléfono) y AAB (para Google Play). Se abre a pantalla completa cuando el dominio está verificado con assetlinks.json." --latest
