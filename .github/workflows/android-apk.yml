@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   apk:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -56,12 +56,22 @@ jobs:
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_B64 }}" | base64 -d > android.keystore
-          bubblewrap update --skipVersionUpgrade
-          bubblewrap build --skipPwaValidation
+          set -o pipefail
+          echo "JAVA_HOME=$JAVA_HOME ANDROID_HOME=$ANDROID_HOME" | tee ../build.log
+          ls "$ANDROID_HOME" "$ANDROID_HOME/build-tools" 2>&1 | tee -a ../build.log
+          bubblewrap update --skipVersionUpgrade < /dev/null 2>&1 | tee -a ../build.log
+          bubblewrap build --skipPwaValidation < /dev/null 2>&1 | tee -a ../build.log
           mkdir -p ../out
           cp app-release-signed.apk "../out/NutriSafe-1.0.${{ github.run_number }}.apk"
           cp app-release-bundle.aab "../out/NutriSafe-1.0.${{ github.run_number }}.aab"
           rm -f android.keystore
+
+      - name: Mostrar el error
+        if: failure()
+        run: |
+          [ -f build.log ] || exit 0
+          MSG=$(tail -n 40 build.log | sed 's/\x1b\[[0-9;]*m//g' | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
+          echo "::error title=Registro de la compilación::$MSG"
 
       - uses: actions/upload-artifact@v4
         with:
