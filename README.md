@@ -20,7 +20,7 @@
 
 Las etiquetas de los alimentos no siempre hablan claro. El mismo ingrediente puede aparecer como **E-330**, **ácido cítrico** o **citric acid**. Un azúcar puede esconderse detrás de **jarabe de glucosa-fructosa**, **dextrosa** o **maltodextrina**.
 
-Con NutriSafe puedes **buscar los ingredientes de forma manual o fotografiando la etiqueta** y ver **con qué otros nombres aparecen en los envases**, en siete idiomas. Así puedes decidir su consumo de forma consciente e informada.
+Con NutriSafe puedes **buscar los ingredientes de forma manual o fotografiando la etiqueta** y ver **con qué otros nombres aparecen en los envases**, en siete idiomas, incluidos nombres de Chile y Latinoamérica (palta, choclo, porotos, maní, manjar…). Así puedes decidir su consumo de forma consciente e informada.
 
 **Un nombre comercial o técnico no debería ser una barrera para decidir sobre nuestra alimentación.**
 
@@ -39,7 +39,9 @@ Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear 
 | 🅰️ **Nutri-Score** | Calcula la letra con el algoritmo oficial de 2023 a partir de la tabla nutricional: escribiendo los valores, fotografiando la tabla, desde un producto de Open Food Facts o buscando un alimento genérico por su nombre (por ejemplo «hallulla» o «palta») en USDA FoodData Central. Muestra el desglose de puntos y qué cambio mejoraría la letra. |
 | ✍️ **Pegar o escribir** | Analiza una lista copiada y entiende paréntesis, porcentajes, "puede contener trazas de…", etc. |
 | 🔎 **Buscador** | Unos 3 500 ingredientes, aditivos (E-numbers) y nutrientes con sus sinónimos en 7 idiomas: es, en, fr, nl, de, it y pt. |
-| ⚠️ **Alérgenos** | Detecta los 14 alérgenos de declaración obligatoria en la UE (Reglamento 1169/2011). |
+| ⚠️ **Alérgenos** | Detecta los 14 alérgenos de declaración obligatoria en la UE (Reglamento 1169/2011) y señala qué ingrediente de la lista contiene cada uno. |
+| 🧩 **Nombres ocultos** | Agrupa los ingredientes que aparecen con muchos nombres: azúcares añadidos, edulcorantes, glutamatos, nitritos, grasas hidrogenadas, palma, fosfatos, colorantes de Southampton y cafeína. |
+| 🏭 **NOVA estimado** | Calcula el grado de procesado a partir de la lista de ingredientes con las reglas de Open Food Facts, y dice qué ingredientes lo deciden. |
 | 👤 **Perfil** | Avisa de lo que quieres evitar: alérgenos, aditivos, ingredientes de origen animal (vegano o vegetariano)… |
 | 📊 **Comparar e historial** | Guarda los productos analizados y compáralos lado a lado. |
 | 🌍 **7 idiomas** | La app se muestra en el idioma del dispositivo (español, inglés, francés, neerlandés, alemán, italiano o portugués) y se puede cambiar en la cabecera. Las fichas, incluidos los nombres de los ingredientes, también se traducen. |
