@@ -42,6 +42,8 @@ jobs:
           mkdir -p ~/.bubblewrap
           echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          # Bubblewrap busca sdkmanager en <sdk>/bin; en el runner está en cmdline-tools/latest/bin
+          [ -e "$ANDROID_HOME/bin" ] || sudo ln -s "$ANDROID_HOME/cmdline-tools/latest/bin" "$ANDROID_HOME/bin"
 
       - name: Versión (un número nuevo en cada compilación)
         working-directory: android
