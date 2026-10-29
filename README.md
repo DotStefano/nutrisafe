@@ -46,6 +46,11 @@ Funciona en el navegador del móvil o del ordenador, sin instalar nada ni crear 
 | 📊 **Comparar e historial** | Guarda los productos analizados y compáralos lado a lado. |
 | 🌍 **7 idiomas** | La app se muestra en el idioma del dispositivo (español, inglés, francés, neerlandés, alemán, italiano o portugués) y se puede cambiar en la cabecera. Las fichas, incluidos los nombres de los ingredientes, también se traducen. |
 
+## Android
+
+- **Instalar desde el navegador:** abre la app en Chrome y elige «Instalar app». Funciona sin conexión.
+- **APK:** cada versión está en [Releases](https://github.com/DotStefano/nutrisafe/releases) (archivo `.apk` para instalar en el teléfono y `.aab` para Google Play). Se genera con GitHub Actions (`.github/workflows/android-apk.yml`) a partir de `android/twa-manifest.json`, como una Trusted Web Activity: la app abre esta misma web y se actualiza sola.
+
 ## Fuentes de datos
 
 - **Comisión Europea:** lista de aditivos autorizados (Anexo II del Reglamento (CE) 1333/2008) y formas autorizadas de vitaminas, minerales y otras sustancias (Reglamento (CE) 1925/2006, Directiva 2002/46/CE y Reglamento (UE) 609/2013).
